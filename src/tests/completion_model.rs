@@ -4,9 +4,8 @@ use crate::message::{
     NvidiaUsage,
 };
 use rig_core::{
-    OneOrMany,
     completion::{self, CompletionError, CompletionRequest, GetTokenUsage},
-    message,
+    message, OneOrMany,
 };
 
 #[test]
@@ -193,22 +192,18 @@ fn test_request_with_preamble_and_history() {
         output_schema: None,
     };
 
-    let nvidia_req: NvidiaChatRequest = request.try_into().unwrap();
+    let nvidia_req = NvidiaChatRequest::from_completion_request(request, "nvidia/test").unwrap();
     assert_eq!(nvidia_req.model, "nvidia/test");
     assert_eq!(nvidia_req.temperature, Some(0.7));
     assert_eq!(nvidia_req.max_tokens, Some(100));
-    assert!(
-        nvidia_req
-            .messages
-            .iter()
-            .any(|m| matches!(m, NvidiaMessage::System { .. }))
-    );
-    assert!(
-        nvidia_req
-            .messages
-            .iter()
-            .any(|m| matches!(m, NvidiaMessage::User { .. }))
-    );
+    assert!(nvidia_req
+        .messages
+        .iter()
+        .any(|m| matches!(m, NvidiaMessage::System { .. })));
+    assert!(nvidia_req
+        .messages
+        .iter()
+        .any(|m| matches!(m, NvidiaMessage::User { .. })));
 }
 
 #[test]
@@ -226,7 +221,7 @@ fn test_request_tool_choice_auto() {
         output_schema: None,
     };
 
-    let nvidia_req: NvidiaChatRequest = request.try_into().unwrap();
+    let nvidia_req = NvidiaChatRequest::from_completion_request(request, "nvidia/test").unwrap();
     assert_eq!(nvidia_req.tool_choice, Some(serde_json::json!("auto")));
 }
 
@@ -245,7 +240,7 @@ fn test_request_tool_choice_required() {
         output_schema: None,
     };
 
-    let nvidia_req: NvidiaChatRequest = request.try_into().unwrap();
+    let nvidia_req = NvidiaChatRequest::from_completion_request(request, "nvidia/test").unwrap();
     assert_eq!(nvidia_req.tool_choice, Some(serde_json::json!("required")));
 }
 
@@ -266,7 +261,7 @@ fn test_request_tool_choice_specific() {
         output_schema: None,
     };
 
-    let nvidia_req: NvidiaChatRequest = request.try_into().unwrap();
+    let nvidia_req = NvidiaChatRequest::from_completion_request(request, "nvidia/test").unwrap();
     let tc = nvidia_req.tool_choice.unwrap();
     assert_eq!(tc["type"], "function");
     assert_eq!(tc["function"]["name"], "search");
@@ -290,7 +285,7 @@ fn test_request_additional_params_tools_extraction() {
         output_schema: None,
     };
 
-    let nvidia_req: NvidiaChatRequest = request.try_into().unwrap();
+    let nvidia_req = NvidiaChatRequest::from_completion_request(request, "nvidia/test").unwrap();
     assert_eq!(nvidia_req.tools.len(), 1);
     assert!(nvidia_req.additional_params.is_some());
     let params = nvidia_req.additional_params.unwrap();

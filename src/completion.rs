@@ -159,12 +159,11 @@ impl TryFrom<NvidiaCompletionResponse>
     }
 }
 
-impl TryFrom<CompletionRequest> for NvidiaChatRequest {
-    type Error = CompletionError;
-
-    fn try_from(req: CompletionRequest) -> Result<Self, Self::Error> {
-        let model = req.model.clone().unwrap_or_default();
-
+impl NvidiaChatRequest {
+    pub(crate) fn from_completion_request(
+        req: CompletionRequest,
+        model: &str,
+    ) -> Result<Self, CompletionError> {
         let mut full_history: Vec<NvidiaMessage> = match &req.preamble {
             Some(preamble) => vec![NvidiaMessage::System {
                 content: preamble.clone(),
@@ -224,7 +223,7 @@ impl TryFrom<CompletionRequest> for NvidiaChatRequest {
         });
 
         Ok(Self {
-            model,
+            model: model.to_owned(),
             messages: full_history,
             temperature: req.temperature,
             max_tokens: req.max_tokens,
@@ -291,7 +290,7 @@ impl CompletionModel for NvidiaCompletionModel {
         &self,
         request: CompletionRequest,
     ) -> Result<completion::CompletionResponse<NvidiaCompletionResponse>, CompletionError> {
-        let nvidia_request = NvidiaChatRequest::try_from(request)?;
+        let nvidia_request = NvidiaChatRequest::from_completion_request(request, &self.model)?;
 
         let mut http_request = self
             .client
@@ -327,7 +326,7 @@ impl CompletionModel for NvidiaCompletionModel {
         &self,
         request: CompletionRequest,
     ) -> Result<StreamingCompletionResponse<Self::StreamingResponse>, CompletionError> {
-        let mut nvidia_request = NvidiaChatRequest::try_from(request)?;
+        let mut nvidia_request = NvidiaChatRequest::from_completion_request(request, &self.model)?;
 
         let params = json_utils::merge(
             nvidia_request
