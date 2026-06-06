@@ -4,8 +4,9 @@ use crate::message::{
     NvidiaUsage,
 };
 use rig_core::{
+    OneOrMany,
     completion::{self, CompletionError, CompletionRequest, GetTokenUsage},
-    message, OneOrMany,
+    message,
 };
 
 #[test]
@@ -196,14 +197,18 @@ fn test_request_with_preamble_and_history() {
     assert_eq!(nvidia_req.model, "nvidia/test");
     assert_eq!(nvidia_req.temperature, Some(0.7));
     assert_eq!(nvidia_req.max_tokens, Some(100));
-    assert!(nvidia_req
-        .messages
-        .iter()
-        .any(|m| matches!(m, NvidiaMessage::System { .. })));
-    assert!(nvidia_req
-        .messages
-        .iter()
-        .any(|m| matches!(m, NvidiaMessage::User { .. })));
+    assert!(
+        nvidia_req
+            .messages
+            .iter()
+            .any(|m| matches!(m, NvidiaMessage::System { .. }))
+    );
+    assert!(
+        nvidia_req
+            .messages
+            .iter()
+            .any(|m| matches!(m, NvidiaMessage::User { .. }))
+    );
 }
 
 #[test]
