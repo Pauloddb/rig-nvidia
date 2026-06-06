@@ -7,7 +7,7 @@ description = "NVIDIA NIM provider integration for the Rig AI framework"
 license = "MIT"
 repository = "https://github.com/Pauloddb/rig-nvidia"
 keywords = ["rig", "nvidia", "nim", "llm", "ai"]
-categories = ["api-bindings", "machine-learning"]
+categories = ["api-binding", "machine-learning"]
 rust-version = "1.95"
 
 [dependencies]
