@@ -1,6 +1,6 @@
 [package]
 name = "rig-nvidia"
-version = "0.1.0"
+version = "0.1.1"
 edition = "2024"
 authors = ["Paulo Dias <diasdebarrospaulo@gmail.com>"]
 description = "NVIDIA NIM provider integration for the Rig AI framework"
