@@ -1,0 +1,25 @@
+[package]
+name = "rig-nvidia"
+version = "0.1.0"
+edition = "2024"
+authors = ["Paulo Dias <diasdebarrospaulo@gmail.com>"]
+description = "NVIDIA NIM provider integration for the Rig AI framework"
+license = "MIT"
+repository = "https://github.com/Pauloddb/rig-nvidia"
+keywords = ["rig", "nvidia", "nim", "llm", "ai"]
+categories = ["api-bindings", "machine-learning"]
+rust-version = "1.95"
+
+[dependencies]
+async-stream = "0.3.6"
+futures = "0.3.32"
+http = "1.4.1"
+reqwest = { version = "0.13.4", features = ["json", "stream"] }
+rig-core = "0.38.1"
+serde = { version = "1.0.228", features = ["derive"] }
+serde_json = "1.0.150"
+thiserror = "2.0.18"
+tokio = { version = "1.52.3", features = ["full"] }
+
+[dev-dependencies]
+tokio-test = "0.4.5"
